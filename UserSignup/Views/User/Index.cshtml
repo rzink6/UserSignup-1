@@ -17,9 +17,7 @@ else
     <p>Hope you're having a @Model.FavColor</p>
 }
 
-@if (ViewBag.users != null) {
-
-    @foreach (User user in ViewBag.users)
+    @foreach (User user in UserData.GetAll())
     {
         <table>
             <tr>
@@ -30,5 +28,4 @@ else
         </table>
 
     }
-} 
 

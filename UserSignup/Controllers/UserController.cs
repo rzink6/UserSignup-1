@@ -24,9 +24,8 @@ namespace UserSignup.Controllers
                 Password = "",
                 Email = "",
                 FavColor = "" };
-            List<User> users = UserData.GetAll();
-            ViewBag.users = users;
-            return View();
+            //List<User> users = UserData.GetAll();
+            return View(user);
         }
 
         [HttpGet]
@@ -64,9 +63,11 @@ namespace UserSignup.Controllers
             return View("Details", user.UserId);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, User user)
         {
-            User user = UserData.GetById(id);
+            if (user == null) {
+                user = UserData.GetById(id);
+            }
             return View(user);
         }
     }
