@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewData["Title"] = "Add";
+}
+
+@model UserSignup.Models.User
+
+
+<h2>Add</h2>
+
+<form method="post" action="Details">
+<p>@ViewBag.PasswordError @ViewBag.UsernameError</p>
+
+    <div class="form-element">
+        <label>UserName</label>
+        <input name="Username" value="@Model.Username" type="text" />
+    </div>
+
+    <div class="form-element">
+        <label>Email</label>
+        <input name="Email" value="@Model.Email" type="email" />
+    </div>
+
+    <div class="form-element">
+        <label>Password</label>
+        <input name="Password" value="@Model.Password" type="password" />
+    </div>
+
+    <div class="form-element">
+        <label>Verify Password</label>
+        <input name="verify" type="password" />
+    </div>
+
+    <div class="form-element">
+        <label>Favorite Color</label>
+        <input name="FavColor" type="text" value="@Model.FavColor" />
+    </div>
+
+    <input type="submit" value="Submit" />
+</form>
