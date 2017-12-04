@@ -4,31 +4,70 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using UserSignup.Models;
+using System.Text.RegularExpressions;
 
 namespace UserSignup.Controllers
 {
     public class UserController : Controller
     {
-        public IActionResult Index()
+        private static UserData userData;
+
+        static UserController()
         {
+            userData = UserData.GetInstance();
+        }
+
+        public IActionResult Index(User user)
+        {
+            if (user == null) user = new User{
+                Username = "",
+                Password = "",
+                Email = "",
+                FavColor = "" };
+            List<User> users = UserData.GetAll();
+            ViewBag.users = users;
             return View();
         }
 
+        [HttpGet]
         public IActionResult Add()
         {
-            return View();
+            return View(new User());
         }
 
         [HttpPost]
         public IActionResult Add(User user, string verify)
         {
+            ViewBag.Error = null;
+
             if (user.Password != verify)
             {
-                ViewBag.PasswordError = "Passwords do not match";
-                return View();
+                ViewBag.Errors += "Passwords do not match<br/>";
             }
 
-            return View("Index");
+            if(user.Username == null || user.Email == null)
+            {
+                ViewBag.Errors += "One or more fields are empty<br/>";
+            }
+
+            if (user.Username.Length < 5 || user.Username.Length > 15 
+                || !Regex.IsMatch(user.Username, @"^[a-zA-Z]+$"))
+            {
+                ViewBag.Errors += "Username is invalid<br/>";
+            }
+
+            if(ViewBag.Errors)
+            {
+                return View();
+            }
+            UserData.Add(user);
+            return View("Details", user.UserId);
+        }
+
+        public IActionResult Details(int id)
+        {
+            User user = UserData.GetById(id);
+            return View(user);
         }
     }
 }
