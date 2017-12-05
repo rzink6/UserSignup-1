@@ -1,74 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using UserSignup.Models;
-using System.Text.RegularExpressions;
 
 namespace UserSignup.Controllers
 {
     public class UserController : Controller
     {
-        private static UserData userData;
-
-        static UserController()
+        public IActionResult Index()
         {
-            userData = UserData.GetInstance();
+            return View();
         }
-
-        public IActionResult Index(User user)
-        {
-            if (user == null) user = new User{
-                Username = "",
-                Password = "",
-                Email = "",
-                FavColor = "" };
-            //List<User> users = UserData.GetAll();
-            return View(user);
-        }
-
-        [HttpGet]
+        
         public IActionResult Add()
         {
-            return View(new User());
+            return View();
         }
 
         [HttpPost]
         public IActionResult Add(User user, string verify)
         {
-            ViewBag.Error = null;
-
-            if (user.Password != verify)
+            if (user.Password == null || !user.Password.Equals(verify))
             {
-                ViewBag.Errors += "Passwords do not match<br/>";
-            }
+                ViewBag.username = user.Username;
+                ViewBag.email = user.Email;
+                ViewBag.message = "Passwords do not match";
 
-            if(user.Username == null || user.Email == null)
-            {
-                ViewBag.Errors += "One or more fields are empty<br/>";
-            }
-
-            if (user.Username.Length < 5 || user.Username.Length > 15 
-                || !Regex.IsMatch(user.Username, @"^[a-zA-Z]+$"))
-            {
-                ViewBag.Errors += "Username is invalid<br/>";
-            }
-
-            if(ViewBag.Errors)
-            {
                 return View();
             }
-            UserData.Add(user);
-            return View("Details", user.UserId);
-        }
 
-        public IActionResult Details(int id, User user)
-        {
-            if (user == null) {
-                user = UserData.GetById(id);
-            }
-            return View(user);
+            ViewBag.username = user.Username;
+
+            return View("Index");
         }
     }
 }
